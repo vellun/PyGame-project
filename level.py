@@ -15,6 +15,7 @@ class Level:
         self.level_shift = 0
         self.render()
         self.f1, self.f2 = False, False
+        self.coin_sound = pygame.mixer.Sound("sounds/coin.wav")  # Звук монеты
 
     def render(self):  # Рисование уровня
         self.tiles = pygame.sprite.Group()
@@ -72,6 +73,7 @@ class Level:
         for coin in self.golden_coins.sprites():
             if coin.rect.colliderect(right_left_rect):
                 coin.kill()
+                self.coin_sound.play()
 
     def update(self):
         if self.hero:

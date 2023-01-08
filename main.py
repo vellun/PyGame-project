@@ -45,6 +45,9 @@ def main_menu():
 
 
 def game():
+    pygame.mixer.music.load("sounds/soundtrack.mp3")  # Фоновая музыка
+    pygame.mixer.music.play(-1)
+
     anim_sprites = pygame.sprite.Group()
     hero = Hero(0, screen, anim_sprites)
     level = Level(screen, hero)
@@ -64,4 +67,6 @@ def game():
 
         clock.tick(FPS)
         pygame.display.flip()
+
+
 game()
