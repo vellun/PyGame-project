@@ -1,86 +1,111 @@
-import pygame.math
-import random
-
 from animations import *
+from functions import *
 
 pygame.init()
-size = width, height = 700, 500
+FPS = 30
 
 
 class Hero(pygame.sprite.Sprite):
-    def __init__(self, hero_num, *group):
+    def __init__(self, hero_num, screen, *group):
         super().__init__(*group)
-        self.image = heroesStands[hero_num][0 // (60 // len(heroesStands[hero_num]))]
-        self.rect = self.image.get_rect()
-        self.rect.topleft = 0, height - self.rect.height - 40
+        sheet, colums, rows = heroesStands[hero_num][0], heroesStands[hero_num][1][0], heroesStands[hero_num][1][1]
+        self.frames = cut_sheet(self, sheet, colums, rows, 250, 250)
+        self.cur_frame = 0
+        self.image = self.frames[self.cur_frame]
+        self.screen = screen
+        self.screen_rect = (0, 0, width, height)
 
-        self.speed = 3
-        self.direction = pygame.math.Vector2(0, 0)
+        self.speed = 8
+        self.directionx, self.directiony = 0, 0
+        self.acceleration = 0.4
+        self.v = -16
 
-        # event_type определяет какая клавиша была нажата
-        self.event_type, self.stand = None, 0  # Переменная stand определяет одну из двух анимаций персонажа когда он стоит
-        self.attack, self.flip = 0, 1  # номер анимации атаки в списке и поворот персонажа
+        self.attack, self.flip = False, 1  # номер анимации атаки в списке и поворот персонажа
         self.press = False  # флаг чтобы определить зажата ли клавиша
         self.anim_num = 0
         self.hero_num = hero_num
+        self.jump = False
+        self.run = False
+        self.stand = True
 
     def get_input(self, evnt):
         keys = pygame.key.get_pressed()
-        if keys[pygame.K_DOWN] and self.hero_num != 1:
-            self.event_type = pygame.K_DOWN
-            self.press = True
+        if evnt:
+            if keys[pygame.K_DOWN] and self.hero_num != 1:
+                self.directionx = 1 if self.flip == 1 else -1
 
-        elif evnt.type == pygame.KEYDOWN and keys[pygame.K_RIGHT] or keys[pygame.K_LEFT]:
-            self.stand = 0
-            self.event_type = pygame.K_RIGHT if keys[pygame.K_RIGHT] else pygame.K_LEFT
-            self.flip = 1 if keys[pygame.K_RIGHT] else 0
-            self.press = True
+            if evnt.type == pygame.KEYDOWN and keys[pygame.K_RIGHT] or keys[pygame.K_LEFT]:
+                self.flip = 1 if keys[pygame.K_RIGHT] else 0
 
-        elif keys[pygame.K_f]:  # атака
-            self.press = False
-            self.event_type, self.anim_num, self.attack = pygame.K_f, 0, random.randrange(2)
-            if self.hero_num == 0:
-                self.stand = 1
+                if self.run:
+                    self.animation(heroesRun)
+                    self.rect.w -= 80
+                    self.run = False
+                self.directionx = 1 if keys[pygame.K_RIGHT] else -1
 
-        if evnt.type == pygame.KEYUP and self.press:
-            self.event_type = None
-            self.press = False
+            if evnt.type == pygame.KEYUP and not self.run:
+                self.animation(heroesStands)
+                self.directionx = 0
+                self.run = True
 
-        self.anim_num += 1
-        if self.anim_num >= 60:
-            self.anim_num = 0
-            if self.event_type and self.event_type == pygame.K_f:
-                if self.hero_num == 0:
-                    self.stand = 1
-                self.event_type, run = None, False
+            if keys[pygame.K_f]:  # атака
+                self.animation(heroesAttack)
+                self.attack = True
+
+            if evnt.type == pygame.KEYDOWN and evnt.key == pygame.K_UP:
+                if not self.jump and self.directiony == 0:
+                    self.directiony = self.v  # прыжок
+                    self.jump = True
+            else:
+                self.jump = False
+
+            if self.attack and self.cur_frame == len(self.frames) - 1:
+                self.animation(heroesStands)
+                self.attack = False
+
+        else:
+            if not self.run:
+                self.directionx = 0
+                self.run = True
+
+    def hero_status(self):
+        if self.directiony > 0:
+            self.animation(heroesFall)
+        elif self.directiony < 0:
+            self.animation(heroesJump)
+        elif self.directiony == 0 and self.directionx == 0:
+            self.animation(heroesStands)
+        elif self.run:
+            self.animation(heroesRun)
+
+    def animation(self, animation_sp):
+        # В зависимости от нужной анимации изменяется список frames
+        sheet, colums, rows = animation_sp[self.hero_num][0], animation_sp[self.hero_num][1][0], \
+                              animation_sp[self.hero_num][1][1]
+        self.frames = cut_sheet(self, sheet, colums, rows, self.rect.x,
+                                self.rect.y) if animation_sp != heroesRun else cut_sheet(self, sheet, colums, rows,
+                                                                                         self.rect.x, self.rect.y,
+                                                                                         'run')
+
+    def fly(self):
+        # Персонаж все время хочет упасть вниз, но блоки уровня ему мешают
+        self.directiony += self.acceleration
+        self.rect.y += self.directiony
 
     def update(self, *args):
-        # В зависимости от нажатой клавиши показываются кадры анимации из списка
         self.get_input(args[0])
-        if not self.event_type:
-            self.image = heroesStands[self.hero_num][
-                self.anim_num // (60 // (len(heroesStands[self.hero_num])))] if not self.stand else hero1Stands2[
-                self.anim_num // 15]
-            self.direction.x = 0
 
-        elif self.event_type == pygame.K_DOWN:
-            self.image = heroesSlide[self.hero_num][self.anim_num // (60 // len(heroesSlide[self.hero_num]))]
-            self.direction.x = 1 if self.flip == 1 else -1
+        self.rect.x += self.directionx * self.speed  # Изменение положения персонажа
+        # pygame.draw.rect(self.screen, 'red', (self.rect.x, self.rect.y, self.rect.width, self.rect.height))
 
-        elif self.event_type == pygame.K_RIGHT:
-            self.image = heroesRun[self.hero_num][self.anim_num // (60 // len(heroesRun[self.hero_num])) - 1]
-            self.direction.x = 1
-
-        elif self.event_type == pygame.K_LEFT:
-            self.image = heroesRun[self.hero_num][self.anim_num // (60 // len(heroesRun[self.hero_num])) - 1]
-            self.direction.x = -1
-
-        elif self.event_type == pygame.K_f:
-            self.image = heroesAttack[self.hero_num][self.attack][
-                self.anim_num // (60 // len(heroesAttack[self.hero_num][self.attack])) - 1]
+        self.image = self.frames[self.cur_frame]
+        self.cur_frame = (self.cur_frame + 1) % len(self.frames)
 
         # Разворот персонажа по горизонтали
         sides = [True, False]
         self.image = pygame.transform.flip(self.image, sides[self.flip], False)
 
-        self.rect.x += self.direction.x * self.speed
+        self.fly()
+
+        # if not self.rect.colliderect(self.screen_rect):
+        #     self.kill()
