@@ -17,7 +17,7 @@ class Hero(pygame.sprite.Sprite):
 
         self.speed = 8
         self.directionx, self.directiony = 0, 0
-        self.acceleration = 0.4
+        self.acceleration = 0.6
         self.v = -16
 
         self.attack, self.flip = False, 1  # номер анимации атаки в списке и поворот персонажа
@@ -26,7 +26,8 @@ class Hero(pygame.sprite.Sprite):
         self.hero_num = hero_num
         self.jump = False
         self.run = False
-        self.stand = True
+        self.stand = False
+        self.status = 'idle'
 
     def get_input(self, evnt):
         keys = pygame.key.get_pressed()
@@ -39,12 +40,14 @@ class Hero(pygame.sprite.Sprite):
 
                 if self.run:
                     self.animation(heroesRun)
+                    self.status = 'run'
                     self.rect.w -= 80
                     self.run = False
                 self.directionx = 1 if keys[pygame.K_RIGHT] else -1
 
             if evnt.type == pygame.KEYUP and not self.run:
                 self.animation(heroesStands)
+                self.status = 'idle'
                 self.directionx = 0
                 self.run = True
 
@@ -61,6 +64,7 @@ class Hero(pygame.sprite.Sprite):
 
             if self.attack and self.cur_frame == len(self.frames) - 1:
                 self.animation(heroesStands)
+                self.status = 'idle'
                 self.attack = False
 
         else:
@@ -68,15 +72,16 @@ class Hero(pygame.sprite.Sprite):
                 self.directionx = 0
                 self.run = True
 
-    def hero_status(self):
-        if self.directiony > 0:
-            self.animation(heroesFall)
-        elif self.directiony < 0:
-            self.animation(heroesJump)
-        elif self.directiony == 0 and self.directionx == 0:
-            self.animation(heroesStands)
-        elif self.run:
-            self.animation(heroesRun)
+    # def hero_status(self):
+    #     if self.directiony > 0:
+    #         self.animation(heroesFall)
+    #     elif self.directiony < 0:
+    #         if self.cur_frame == 0:
+    #             self.animation(heroesJump)
+    #     elif self.directiony == 0 and self.directionx == 0:
+    #         self.animation(heroesStands)
+    #     elif self.run:
+    #         self.animation(heroesRun)
 
     def animation(self, animation_sp):
         # В зависимости от нужной анимации изменяется список frames
@@ -107,5 +112,5 @@ class Hero(pygame.sprite.Sprite):
 
         self.fly()
 
-        # if not self.rect.colliderect(self.screen_rect):
-        #     self.kill()
+        if not self.rect.colliderect(self.screen_rect):
+            self.kill()

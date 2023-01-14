@@ -13,4 +13,5 @@ heroesAttack = [[load_image("itch light atk sheet-Sheet.png"), (26, 1)]]
 
 heroesRun = [[load_image("itch run-Sheet sheet.png"), (24, 1)]]
 
+heroesHurt = [[load_image("itch hurt 2 sheet-Sheet.png"), (7, 1)]]
 

@@ -3,10 +3,10 @@ from functions import *
 
 
 class Coins(pygame.sprite.Sprite):
-    def __init__(self, x, y, *group):
+    def __init__(self, x, y, coin, *group):
         super().__init__(*group)
 
-        self.frames = cut_sheet(self, load_image("MonedaD.png"), 5, 1, x, y)
+        self.frames = cut_sheet(self, load_image(coin), 5, 1, x, y)
         self.cur_frame = 0
         self.image = self.frames[self.cur_frame]
 
