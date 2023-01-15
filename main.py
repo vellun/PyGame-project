@@ -11,7 +11,7 @@ pygame.init()
 screen = pygame.display.set_mode((width, height))
 clock = pygame.time.Clock()
 FPS = 30
-background = pygame.transform.scale(load_image('Back.jpg'), (width, height))
+background = pygame.transform.scale(load_image('Space Background.png'), (width, height))
 background2 = pygame.transform.scale(load_image('Background3 (2).jpg'), (width, height))
 
 
