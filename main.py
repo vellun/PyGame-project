@@ -4,6 +4,7 @@ from hero import Hero
 from level import Level
 import pygame
 from functions import load_image, width, height
+from game_interface import game_intrf
 
 pygame.init()
 
@@ -57,6 +58,7 @@ def game():
         screen.blit(background, (0, 0))
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
+                level.coins_kolvo(None, True)
                 pygame.quit()
                 sys.exit()
             elif event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
@@ -64,9 +66,10 @@ def game():
         level.update()
         anim_sprites.update(event)
         anim_sprites.draw(screen)
+        game_intrf(screen)
 
         clock.tick(FPS)
         pygame.display.flip()
 
 
-game()
+main_menu()

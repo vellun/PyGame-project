@@ -6,6 +6,7 @@ from coins import Coins
 from enemy import *
 from objects_coords import *
 from animations import *
+import csv
 
 
 class Level:
@@ -15,38 +16,46 @@ class Level:
         self.hero = hero
         self.level_shift = 0
         self.render()
-        self.f = False
+        self.ff = False
         self.coin_sound = pygame.mixer.Sound("sounds/coin.wav")  # Звук монеты
         self.enem = None
 
     def render(self):  # Рисование уровня
         self.tiles = pygame.sprite.Group()
-        self.coins = pygame.sprite.Group()
+        self.golden_coins = pygame.sprite.Group()
+        self.silver_coins = pygame.sprite.Group()
         self.enemies = pygame.sprite.Group()
         self.enemies_rects = pygame.sprite.Group()
+        self.flag = pygame.sprite.Group()
         for y in range(self.map.height):
             for x in range(self.map.width):
                 image = self.map.get_tile_image(x, y, layer=0)
                 if image:
                     Tile(self.map, x, y, self.level_shift, self.tiles)
         for i in golden_coins:  # Создание золотых монет
-            Coins(i[0] * self.map.tilewidth, i[1] * self.map.tilewidth, "MonedaD.png", self.coins)
+            Coins(i[0] * self.map.tilewidth, i[1] * self.map.tilewidth, "MonedaD.png", self.golden_coins)
         for i in silver_coins:  # Создание серебряных монет
-            Coins(i[0] * self.map.tilewidth, i[1] * self.map.tilewidth, "MonedaP.png", self.coins)
+            Coins(i[0] * self.map.tilewidth, i[1] * self.map.tilewidth, "MonedaP.png", self.silver_coins)
         for i in enemies:  # Создание врагов
             Enemy(i[0] * self.map.tilewidth, i[1] * self.map.tilewidth, self.enemies)
+        for i in flags:
+            Coins(i[0] * self.map.tilewidth, i[1] * self.map.tilewidth, "flag animation.png", self.flag)
 
     def camera(self):  # Камера
         playerx = self.hero.rect.centerx
-        if playerx < width // 2 and self.hero.directionx < 0:
-            self.hero.speed = 0
-            self.level_shift = 5
-        elif playerx > width // 2 and self.hero.directionx > 0:
-            self.hero.speed = 0
-            self.level_shift = -5
-        else:
+        if not self.ff:
+            if playerx < width // 2 and self.hero.directionx < 0:
+                self.hero.speed = 0
+                self.level_shift = 5
+            elif playerx > width // 2 and self.hero.directionx > 0:
+                self.hero.speed = 0
+                self.level_shift = -5
+            else:
+                self.level_shift = 0
+                self.hero.speed = 8
+        if playerx - width // 2 >= self.map.width * self.map.tilewidth - width and not self.ff:
             self.level_shift = 0
-            self.hero.speed = 8
+            self.ff = True
 
     def collision(self):
         right_left_rect = pygame.Rect(self.hero.rect.left - 5, self.hero.rect.top, self.hero.rect.width,
@@ -73,11 +82,23 @@ class Level:
                     self.hero.directionx = 0
                 self.level_shift = 0
 
-        #  Проверка столкновений персонажа с монетами
-        for coin in self.coins.sprites():
+        #  Проверка столкновений персонажа с золотыми монетами
+        for coin in self.golden_coins.sprites():
             if coin.rect.colliderect(right_left_rect):
+                self.coins_kolvo('golden')
                 coin.kill()
                 self.coin_sound.play()
+
+        #  Проверка столкновений персонажа с серебряными монетами
+        for coin in self.silver_coins.sprites():
+            if coin.rect.colliderect(right_left_rect):
+                self.coins_kolvo('silver')
+                coin.kill()
+                self.coin_sound.play()
+
+        if pygame.sprite.spritecollideany(self.hero, self.flag):
+            pygame.quit()
+            sys.exit()
 
         #  Проверка столкновений врагов с уровнем
         for enemy in self.enemies.sprites():
@@ -93,15 +114,36 @@ class Level:
             else:
                 enemy.frames = cut_sheet(self, load_image("Flight.png"), 8, 1, enemy.rect.x, enemy.rect.y)
 
+        #  Проверка столкновений героя с врагами
         if pygame.sprite.spritecollideany(self.hero, self.enemies_rects):
             if self.hero.cur_frame == 0:
                 self.hero.animation(heroesHurt)
+                self.coins_kolvo('lives')
         else:
             if self.hero.cur_frame == 0:
                 if self.hero.directionx == 0:
                     self.hero.animation(heroesStands)
                 else:
                     self.hero.animation(heroesRun)
+
+    def coins_kolvo(self, coin, zeroing=False):  # Изменение общего количества монет в файле
+        file_read = csv.DictReader(open('data/coins.csv'), delimiter=';')
+        coins = list(file_read)
+        if coin == 'lives':
+            coins[0][coin] = int(coins[0][coin]) - 1
+        else:
+            if not zeroing:
+                coins[0][coin] = int(coins[0][coin]) + 1
+                coins[0][f"cur_{coin}"] = int(coins[0][f"cur_{coin}"]) + 1
+            else:
+                coins[0]["cur_golden"], coins[0][
+                    "cur_silver"] = 0, 0  # Вначале игры монеты обнуляются, а жизни восстанавливаются
+                coins[0]["lives"] = 3
+
+        file_write = csv.DictWriter(open('data/coins.csv', 'w', newline=''), fieldnames=list(coins[0].keys()),
+                                    delimiter=';')
+        file_write.writeheader()
+        file_write.writerow(coins[0])
 
     def update(self):
         if self.hero:
@@ -110,8 +152,14 @@ class Level:
         self.tiles.draw(self.screen)
         self.tiles.update(self.level_shift)
 
-        self.coins.draw(self.screen)
-        self.coins.update(self.level_shift)
+        self.golden_coins.draw(self.screen)
+        self.golden_coins.update(self.level_shift)
+
+        self.silver_coins.draw(self.screen)
+        self.silver_coins.update(self.level_shift)
+
+        self.flag.update(self.level_shift)
+        self.flag.draw(self.screen)
 
         self.enemies.draw(self.screen)
         self.enemies.update(self.level_shift)
