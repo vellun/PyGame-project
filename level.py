@@ -16,8 +16,11 @@ class Level:
         self.hero = hero
         self.level_shift = 0
         self.render()
-        self.ff = False
+        self.f = True
         self.coin_sound = pygame.mixer.Sound("sounds/coin.wav")  # Звук монеты
+        self.coin_sound2 = pygame.mixer.Sound("sounds/vipali_coins.mp3")  # Звук выпадения монет из монстра
+        self.voice = pygame.mixer.Sound("sounds/voice.mp3")
+        self.bah = pygame.mixer.Sound("sounds/bah.mp3")
         self.enem = None
 
     def render(self):  # Рисование уровня
@@ -38,24 +41,22 @@ class Level:
             Coins(i[0] * self.map.tilewidth, i[1] * self.map.tilewidth, "MonedaP.png", self.silver_coins)
         for i in enemies:  # Создание врагов
             Enemy(i[0] * self.map.tilewidth, i[1] * self.map.tilewidth, self.enemies)
-        for i in flags:
+        for i in flags:  # Создание флага
             Coins(i[0] * self.map.tilewidth, i[1] * self.map.tilewidth, "flag animation.png", self.flag)
 
     def camera(self):  # Камера
         playerx = self.hero.rect.centerx
-        if not self.ff:
-            if playerx < width // 2 and self.hero.directionx < 0:
-                self.hero.speed = 0
-                self.level_shift = 5
-            elif playerx > width // 2 and self.hero.directionx > 0:
-                self.hero.speed = 0
-                self.level_shift = -5
-            else:
-                self.level_shift = 0
-                self.hero.speed = 8
-        if playerx - width // 2 >= self.map.width * self.map.tilewidth - width and not self.ff:
+        if playerx < width // 2 and self.hero.directionx < 0:
+            self.hero.speed = 0
+            self.level_shift = 5
+        elif playerx > width // 2 and self.hero.directionx > 0:
+            self.hero.speed = 0
+            self.level_shift = -5
+        else:
             self.level_shift = 0
-            self.ff = True
+            self.hero.speed = 8
+        if playerx - width // 2 >= self.map.width * self.map.tilewidth - width:
+            self.level_shift = 0
 
     def collision(self):
         right_left_rect = pygame.Rect(self.hero.rect.left - 5, self.hero.rect.top, self.hero.rect.width,
@@ -109,17 +110,28 @@ class Level:
             if enemy.rect.colliderect(right_left_rect):
                 enemy.frames = cut_sheet(self, load_image("Attack.png"), 8, 1, enemy.rect.x, enemy.rect.y)
                 if self.hero.attack:
+                    self.bah.play()
                     enemy.kill()
+                    for i in (100, -120, -150):
+                        golden_coins.append((self.hero.rect.centerx + i, self.hero.rect.centery))
+                    for i in golden_coins[-3:]:
+                        Coins(i[0], i[1], "MonedaD.png", self.golden_coins)
+                    pygame.time.delay(200)
+                    self.coin_sound2.play()
 
             else:
                 enemy.frames = cut_sheet(self, load_image("Flight.png"), 8, 1, enemy.rect.x, enemy.rect.y)
 
         #  Проверка столкновений героя с врагами
         if pygame.sprite.spritecollideany(self.hero, self.enemies_rects):
-            if self.hero.cur_frame == 0:
+            if self.hero.cur_frame == 0 and self.f:
                 self.hero.animation(heroesHurt)
-                self.coins_kolvo('lives')
+                self.voice.play()
+                if not self.coins_kolvo('lives'):
+                    pass
+                self.f = False
         else:
+            self.f = True
             if self.hero.cur_frame == 0:
                 if self.hero.directionx == 0:
                     self.hero.animation(heroesStands)
@@ -144,6 +156,10 @@ class Level:
                                     delimiter=';')
         file_write.writeheader()
         file_write.writerow(coins[0])
+
+        if coins[0][coin] <= 0:
+            return False
+        return True
 
     def update(self):
         if self.hero:

@@ -12,11 +12,11 @@ screen = pygame.display.set_mode((width, height))
 clock = pygame.time.Clock()
 FPS = 30
 background = pygame.transform.scale(load_image('Back.jpg'), (width, height))
-background2 = pygame.transform.scale(load_image('Background3 (2).jpg'), (width, height))
+background2 = pygame.transform.scale(load_image('Back.jpg'), (width, height))
 
 
 def draw_text(text):
-    font = pygame.font.Font(None, 60)
+    font = pygame.font.Font('data/retro-land-mayhem.ttf', 60)
     text = font.render(text, True, 'blue')
     screen.blit(text, (300, 300))
 

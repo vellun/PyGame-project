@@ -1,10 +1,14 @@
 import pygame
 import sys
 import os
+from pygame import mixer
 
 ''' Функции для загрузки картинки(load image) и для получения кадров анимации(cut_sheet) '''
 
 size = width, height = 1600, 900
+
+mixer.init()
+fail_sound = mixer.Sound("sounds/fail_snd.wav")  # Звук проигрыша
 
 
 def load_image(name, colorkey=None):

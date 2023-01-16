@@ -113,4 +113,5 @@ class Hero(pygame.sprite.Sprite):
         self.fly()
 
         if not self.rect.colliderect(self.screen_rect):
+            fail_sound.play()
             self.kill()

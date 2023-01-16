@@ -13,8 +13,8 @@ def game_intrf(screen):
 
     file_read = csv.DictReader(open('data/coins.csv'), delimiter=';')
     coins = list(file_read)
-    draw_nums(str(coins[0]['cur_golden']), (width - 140, 60), screen)
-    draw_nums(str(coins[0]['cur_silver']), (width - 240, 60), screen)
+    draw_nums(str(coins[0]['cur_golden']), (width - 138, 55), screen)
+    draw_nums(str(coins[0]['cur_silver']), (width - 238, 55), screen)
 
     #  Отображение жизней
     full_live = pygame.image.load("sprites/interface_pictures/full_heart.png")
@@ -37,6 +37,6 @@ def get_lives(sp):
 
 
 def draw_nums(num, pos, screen):
-    font = pygame.font.Font(None, 55)
+    font = pygame.font.Font('data/retro-land-mayhem.ttf', 35)
     text = font.render(num, True, 'black')
     screen.blit(text, pos)
