@@ -28,6 +28,7 @@ class Hero(pygame.sprite.Sprite):
         self.run = False
         self.stand = False
         self.status = 'idle'
+        self.bah = pygame.mixer.Sound("sounds/bahbah.mp3")
 
     def get_input(self, evnt):
         keys = pygame.key.get_pressed()
@@ -53,6 +54,7 @@ class Hero(pygame.sprite.Sprite):
 
             if keys[pygame.K_f]:  # атака
                 self.animation(heroesAttack)
+                self.bah.play()
                 self.attack = True
 
             if evnt.type == pygame.KEYDOWN and evnt.key == pygame.K_UP:
@@ -101,7 +103,6 @@ class Hero(pygame.sprite.Sprite):
         self.get_input(args[0])
 
         self.rect.x += self.directionx * self.speed  # Изменение положения персонажа
-        # pygame.draw.rect(self.screen, 'red', (self.rect.x, self.rect.y, self.rect.width, self.rect.height))
 
         self.image = self.frames[self.cur_frame]
         self.cur_frame = (self.cur_frame + 1) % len(self.frames)

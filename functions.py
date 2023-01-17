@@ -37,8 +37,8 @@ def cut_sheet(obj, sheet, columns, rows, x, y, type='idle'):
     for j in range(rows):
         for i in range(columns):
             frame_location = (obj.rect.w * i, obj.rect.h * j)
-            if type == 'run':
-                frames.append(sheet.subsurface(pygame.Rect(frame_location, (obj.rect.w - 80, obj.rect.h))))
-            else:
-                frames.append(sheet.subsurface(pygame.Rect(frame_location, (obj.rect.w, obj.rect.h))))
+            # if type == 'run':
+            #     frames.append(sheet.subsurface(pygame.Rect(frame_location, (obj.rect.w - 80, obj.rect.h))))
+            # else:
+            frames.append(sheet.subsurface(pygame.Rect(frame_location, (obj.rect.w, obj.rect.h))))
     return frames

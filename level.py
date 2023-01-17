@@ -59,11 +59,20 @@ class Level:
             self.level_shift = 0
 
     def collision(self):
-        right_left_rect = pygame.Rect(self.hero.rect.left - 5, self.hero.rect.top, self.hero.rect.width,
+        right_left_rect = pygame.Rect(self.hero.rect.left - 5, self.hero.rect.top + 15, self.hero.rect.width,
                                       self.hero.rect.height - 30)
         top_bottom_rect = pygame.Rect(self.hero.rect.left + 18, self.hero.rect.top, self.hero.rect.width - 36,
                                       self.hero.rect.height)
+
         for sprite in self.tiles.sprites():
+            #  Проверка столкновений справа и слева от персонажа
+            if sprite.rect.collidepoint(self.hero.rect.centerx, self.hero.rect.height):
+                if self.hero.directionx < 0:
+                    self.hero.rect.left = sprite.rect.right
+                    self.hero.directionx = 0
+                elif self.hero.directionx > 0:
+                    self.hero.rect.right = sprite.rect.left
+                    self.hero.directionx = 0
             #  Проверка столкновений сверху и снизу персонажа
             if sprite.rect.colliderect(top_bottom_rect):
                 if self.hero.directiony < 0:
@@ -72,16 +81,6 @@ class Level:
                 elif self.hero.directiony > 0:
                     self.hero.rect.bottom = sprite.rect.top + 10
                     self.hero.directiony = 0
-
-            #  Проверка столкновений справа и слева от персонажа
-            elif sprite.rect.colliderect(right_left_rect):
-                if self.hero.directionx < 0:
-                    self.hero.rect.left = sprite.rect.right
-                    self.hero.directionx = 0
-                elif self.hero.directionx > 0:
-                    self.hero.rect.right = sprite.rect.left
-                    self.hero.directionx = 0
-                self.level_shift = 0
 
         #  Проверка столкновений персонажа с золотыми монетами
         for coin in self.golden_coins.sprites():
@@ -137,6 +136,8 @@ class Level:
                     self.hero.animation(heroesStands)
                 else:
                     self.hero.animation(heroesRun)
+        # pygame.draw.rect(self.screen, 'red',
+        #                  (self.hero.rect.x, self.hero.rect.y, self.hero.rect.width, self.hero.rect.height))
 
     def coins_kolvo(self, coin, zeroing=False):  # Изменение общего количества монет в файле
         file_read = csv.DictReader(open('data/coins.csv'), delimiter=';')
