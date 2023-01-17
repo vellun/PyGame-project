@@ -3,43 +3,40 @@ import sys
 from hero import Hero
 from level import Level
 import pygame
-from functions import load_image, width, height
+from functions import *
 from game_interface import game_intrf
+from main_menu import *
 
 pygame.init()
 
-screen = pygame.display.set_mode((width, height))
 clock = pygame.time.Clock()
 FPS = 30
 background = pygame.transform.scale(load_image('Back.jpg'), (width, height))
-background2 = pygame.transform.scale(load_image('Back.jpg'), (width, height))
-
-
-def draw_text(text):
-    font = pygame.font.Font('data/retro-land-mayhem.ttf', 60)
-    text = font.render(text, True, 'blue')
-    screen.blit(text, (300, 300))
+background2 = pygame.transform.scale(load_image('blur_background.jpg'), (width, height))
 
 
 def main_menu():
+    pygame.mixer.music.load("sounds/menu_snt.mp3")  # Фоновая музыка
+    pygame.mixer.music.play(-1)
     while True:
         screen.blit(background2, (0, 0))
-        draw_text('Run, hero, run!')
-        menu_back = Level(screen)
-        menu_back.level_shift = -3
-
-        button1 = pygame.Rect(0, 0, 200, 50)
-        button2 = pygame.Rect(50, 200, 200, 50)
-        pygame.draw.rect(screen, 'pink', button1)
-        pygame.draw.rect(screen, 'pink', button2)
+        btns = create_menu()
+        for btn in btns:
+            if btn.rect.collidepoint(pygame.mouse.get_pos()):
+                btn.draw('#1E90FF')
+            else:
+                btn.draw()
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
             elif event.type == pygame.MOUSEBUTTONDOWN:
-                if button1.collidepoint(event.pos):
+                if btns[0].rect.collidepoint(event.pos):
                     game()
+                elif btns[1].rect.collidepoint(event.pos):
+                    pygame.quit()
+                    sys.exit()
 
         clock.tick(FPS)
         pygame.display.flip()

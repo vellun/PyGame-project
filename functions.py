@@ -9,6 +9,7 @@ size = width, height = 1600, 900
 
 mixer.init()
 fail_sound = mixer.Sound("sounds/fail_snd.wav")  # Звук проигрыша
+screen = pygame.display.set_mode((width, height)) # Основной экран
 
 
 def load_image(name, colorkey=None):
@@ -42,3 +43,11 @@ def cut_sheet(obj, sheet, columns, rows, x, y, type='idle'):
             # else:
             frames.append(sheet.subsurface(pygame.Rect(frame_location, (obj.rect.w, obj.rect.h))))
     return frames
+
+def draw_text(text, btn_pos, btn_size):
+    font = pygame.font.Font('data/retro-land-mayhem.ttf', 50)
+    text2 = font.render(text, True, 'white')
+    bx, by = btn_pos
+    bw, bh = btn_size
+    fw, fh = font.size(text)
+    screen.blit(text2, (bx + ((bw - fw) // 2), by + ((bh - fh) // 2)))
