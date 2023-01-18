@@ -1,20 +1,22 @@
 import pygame
 from functions import *
 
+enemies_attacks = {'eye': load_image('Attack.png'), 'mishroom': load_image('mishroom_attack.png'),
+                   'goblin': load_image('goblin_attack.png')}
+
 
 # Класс врагов
 class Enemy(pygame.sprite.Sprite):
-    def __init__(self, x, y, *group):
+    def __init__(self, x, y, pic, enemy, *group):
         super().__init__(*group)
 
-        self.frames = cut_sheet(self, load_image("Flight.png"), 8, 1, x, y)
+        self.pic = load_image(pic)
+        self.attack_pic = enemies_attacks[enemy]
+        self.frames = cut_sheet(self, self.pic, 8, 1, x, y)
         self.cur_frame = 0
         self.image = self.frames[self.cur_frame]
         self.speed = 5
         self.directionx = 1
-
-    # def change_frames(self, pic, cols, rows):
-    #     self.frames = cut_sheet(self, load_image("Flight.png"), 8, 1, x, y)
 
     def update(self, shift):
         self.image = self.frames[self.cur_frame]

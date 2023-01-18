@@ -21,6 +21,7 @@ def main_menu():
     while True:
         screen.blit(background2, (0, 0))
         st = settings_btn()['settings']  # Кнопка настроек
+        pygame.mixer.music.set_volume(int(get_volume()['cur_volume']) / 100)  # Изменение громкости музыки
         btns = create_menu()
         for btn in btns:  # Подсветка кнопки синим цветом при наведении курсора
             if btn.rect.collidepoint(pygame.mouse.get_pos()):
@@ -49,6 +50,7 @@ def main_menu():
 def game():
     pygame.mixer.music.load("sounds/soundtrack.mp3")  # Фоновая музыка
     pygame.mixer.music.play(-1)
+    pygame.mixer.music.set_volume(int(get_volume()['cur_volume']) / 100)  # Изменение громкости музыки
 
     anim_sprites = pygame.sprite.GroupSingle()
     hero = Hero(0, screen, anim_sprites)
@@ -79,6 +81,7 @@ def settings():
     while running:
         screen.blit(background2, (0, 0))
         btns = create_settings()
+        pygame.mixer.music.set_volume(int(get_volume()['cur_volume']) / 100)  # Изменение громкости музыки
 
         for btn in btns:  # Подсветка кнопки синим цветом при наведении курсора
             if btn.rect.collidepoint(pygame.mouse.get_pos()):
@@ -93,13 +96,13 @@ def settings():
             elif event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
                 running = False
             elif event.type == pygame.MOUSEBUTTONDOWN:
+                cur_volume = int(get_volume()['cur_volume'])
                 if btns[0].rect.collidepoint(event.pos):  # Если нажата кнопка +
                     if cur_volume < 100:
-                        pass
-                elif btns[0].rect.collidepoint(event.pos):  # Если нажата кнопка -
+                        change_volume(1)
+                elif btns[1].rect.collidepoint(event.pos):  # Если нажата кнопка -
                     if cur_volume > 0:
-                        pass
-
+                        change_volume(-1)
 
         clock.tick(FPS)
         pygame.display.flip()

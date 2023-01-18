@@ -8,7 +8,8 @@ from objects_coords import *
 from animations import *
 import csv
 
-maps = ['map.tmx', 'map2.tmx', 'map2.tmx']
+maps = ['map.tmx', 'map2.tmx', 'map3.tmx']
+
 
 class Level:
     def __init__(self, screen, hero=None):
@@ -40,8 +41,12 @@ class Level:
             Coins(i[0] * self.map.tilewidth, i[1] * self.map.tilewidth, "MonedaD.png", self.golden_coins)
         for i in silver_coins[cur_level]:  # Создание серебряных монет
             Coins(i[0] * self.map.tilewidth, i[1] * self.map.tilewidth, "MonedaP.png", self.silver_coins)
-        for i in enemies[cur_level]:  # Создание врагов
-            Enemy(i[0] * self.map.tilewidth, i[1] * self.map.tilewidth, self.enemies)
+        for i in enemies_eyes[cur_level]:  # Создание врагов-летающих глаз
+            Enemy(i[0] * self.map.tilewidth, i[1] * self.map.tilewidth, 'Flight.png', 'eye', self.enemies)
+        for i in enemies_mishrooms[cur_level]:  # Создание врагов-грибов
+            Enemy(i[0] * self.map.tilewidth, i[1] * self.map.tilewidth, 'mishroom_run.png', 'mishroom', self.enemies)
+        for i in enemies_goblins[cur_level]:  # Создание врагов-гоблинов
+            Enemy(i[0] * self.map.tilewidth, i[1] * self.map.tilewidth, 'goblin_run.png', 'goblin', self.enemies)
         for i in flags[cur_level]:  # Создание флага
             Coins(i[0] * self.map.tilewidth, i[1] * self.map.tilewidth, "flag animation.png", self.flag)
 
@@ -109,19 +114,19 @@ class Level:
                 enemy.directionx *= -1
 
             if enemy.rect.colliderect(right_left_rect):
-                enemy.frames = cut_sheet(self, load_image("Attack.png"), 8, 1, enemy.rect.x, enemy.rect.y)
+                enemy.frames = cut_sheet(self, enemy.attack_pic, 8, 1, enemy.rect.x, enemy.rect.y)
                 if self.hero.attack:
                     self.bah.play()
-                    enemy.kill()
                     for i in (100, -120, -150):
                         golden_coins.append((self.hero.rect.centerx + i, self.hero.rect.centery))
                     for i in golden_coins[-3:]:
                         Coins(i[0], i[1], "MonedaD.png", self.golden_coins)
+                    enemy.kill()
                     pygame.time.delay(200)
                     self.coin_sound2.play()
 
             else:
-                enemy.frames = cut_sheet(self, load_image("Flight.png"), 8, 1, enemy.rect.x, enemy.rect.y)
+                enemy.frames = cut_sheet(self, enemy.pic, 8, 1, enemy.rect.x, enemy.rect.y)
 
         #  Проверка столкновений героя с врагами
         if pygame.sprite.spritecollideany(self.hero, self.enemies_rects):
@@ -129,8 +134,7 @@ class Level:
                 self.hero.animation(heroesHurt)
                 self.voice.play()
                 if not self.coins_kolvo('lives'):
-                    pass
-                self.f = False
+                    self.f = False
         else:
             self.f = True
             if self.hero.cur_frame == 0:
@@ -160,7 +164,7 @@ class Level:
         file_write.writeheader()
         file_write.writerow(coins[0])
 
-        if coins[0][coin] <= 0:
+        if coin and coins[0][coin] <= 0:
             return False
         return True
 

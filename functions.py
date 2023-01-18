@@ -1,3 +1,5 @@
+import csv
+
 import pygame
 import sys
 import os
@@ -6,12 +8,26 @@ from pygame import mixer
 ''' Функции для загрузки картинки(load image) и для получения кадров анимации(cut_sheet) '''
 
 size = width, height = 1600, 900
-cur_level = 0
-cur_volume = 100
+cur_level = 2
 
 mixer.init()
 fail_sound = mixer.Sound("sounds/fail_snd.wav")  # Звук проигрыша
 screen = pygame.display.set_mode((width, height))  # Основной экран
+
+
+def get_volume():  # Функция для получения значения громкости из файла
+    volume_file = list(csv.DictReader(open('data/volume.csv'), delimiter=';'))
+    return volume_file[0]
+
+
+# Функция для изменения громкости музыки в игре
+def change_volume(volume=1):
+    v = get_volume()
+    v['cur_volume'] = int(v['cur_volume']) + 5 * volume  # volume показывает, нужно уменьшать громкость или увеличивать
+
+    file_write = csv.DictWriter(open('data/volume.csv', 'w', newline=''), fieldnames=['cur_volume'], delimiter=';')
+    file_write.writeheader()
+    file_write.writerow(v)
 
 
 def load_image(name, colorkey=None):
@@ -54,4 +70,3 @@ def draw_text(text, btn_pos=None, btn_size=None, pos=None, color='white'):
         screen.blit(text2, (bx + ((bw - fw) // 2), by + ((bh - fh) // 2)))
     if pos:  # Если переданы только координаты, нужно напечатать просто текст
         screen.blit(text2, pos)
-

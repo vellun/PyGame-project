@@ -26,18 +26,19 @@ def create_menu():
     btn_levels = Button(screen, (width // 2 - 200, height // 2 - 200), (400, 100), 'Levels')
     return [btn_start, btn_exit, btn_levels]
 
+
 #  Создание кнопок в настройках
 def create_settings():
     global cur_volume
 
     draw_text("Volume settings", None, None, (width // 2 - 260, 150), 'black')  # Печатаем текст
 
-    draw_text(f"Current volume: {cur_volume}%", None, None, (width // 2 - 400, 300), 'black')  # Печатаем текст
-    print(cur_volume)
+    draw_text(f"Current volume: {get_volume()['cur_volume']}%", None, None, (width // 2 - 400, 300), 'black')  # Печатаем текст
 
     minus_btn = Button(screen, (width // 2 - 400, 500), (200, 100), '-')
     plus_btn = Button(screen, (width // 2 + 90, 500), (200, 100), '+')
     return [plus_btn, minus_btn]
+
 
 def settings_btn():
     #  Отображение кнопки настроек в главном меню
@@ -46,5 +47,3 @@ def settings_btn():
     settings_rect.x, settings_rect.y = 70, 60
     screen.blit(settings, (settings_rect.x, settings_rect.y))
     return {'settings': settings_rect}
-
-
