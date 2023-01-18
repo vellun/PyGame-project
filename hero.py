@@ -1,6 +1,7 @@
 from animations import *
 from functions import *
 
+
 pygame.init()
 FPS = 30
 
@@ -20,7 +21,7 @@ class Hero(pygame.sprite.Sprite):
         self.acceleration = 0.6
         self.v = -16
 
-        self.attack, self.flip = False, 1  # номер анимации атаки в списке и поворот персонажа
+        self.attack, self.flip = False, 1  # атака и поворот персонажа
         self.press = False  # флаг чтобы определить зажата ли клавиша
         self.anim_num = 0
         self.hero_num = hero_num
@@ -29,6 +30,7 @@ class Hero(pygame.sprite.Sprite):
         self.stand = False
         self.status = 'idle'
         self.bah = pygame.mixer.Sound("sounds/bahbah.mp3")
+        self.exist = False  # Флаг, показывающий, существует ли персонаж
 
     def get_input(self, evnt):
         keys = pygame.key.get_pressed()
@@ -105,3 +107,5 @@ class Hero(pygame.sprite.Sprite):
         if not self.rect.colliderect(self.screen_rect):
             fail_sound.play()
             self.kill()
+            self.exist = True
+

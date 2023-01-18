@@ -34,7 +34,6 @@ def create_menu():
 
 #  Создание кнопок в настройках
 def create_settings():
-    global cur_volume
 
     draw_text("Volume settings", None, None, (width // 2 - 260, 150), 'black')  # Печатаем текст
 
@@ -71,3 +70,13 @@ def change_lvl():
     for i in btns:
         i.draw()
     return btns
+
+
+#  Создание кнопок на экране проигрыша
+def game_over_btns():
+    grave = pygame.image.load("sprites/interface_pictures/grave.png")
+    screen.blit(grave, (width - width // 2 - 130, 100))
+
+    exit_btn = Button(screen, (width - width // 2 - 450, 600), (300, 100), "Exit")
+    restart_btn = Button(screen, (width - width // 2 + 180, 600), (300, 100), "Restart")
+    return [exit_btn, restart_btn]

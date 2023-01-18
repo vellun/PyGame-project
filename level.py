@@ -24,7 +24,6 @@ class Level:
         self.coin_sound2 = pygame.mixer.Sound("sounds/vipali_coins.mp3")  # Звук выпадения монет из монстра
         self.voice = pygame.mixer.Sound("sounds/voice.mp3")
         self.bah = pygame.mixer.Sound("sounds/bah.mp3")
-        self.enem = None
         self.level_end = False
 
     def render(self):  # Рисование уровня
@@ -152,8 +151,6 @@ class Level:
                     self.hero.animation(heroesStands)
                 else:
                     self.hero.animation(heroesRun)
-        # pygame.draw.rect(self.screen, 'red',
-        #                  (self.hero.rect.x, self.hero.rect.y, self.hero.rect.width, self.hero.rect.height))
 
     def coins_kolvo(self, coin, zeroing=False):  # Изменение общего количества монет в файле
         file_read = csv.DictReader(open('data/coins.csv'), delimiter=';')

@@ -12,7 +12,6 @@ pygame.init()
 
 clock = pygame.time.Clock()
 FPS = 30
-background = pygame.transform.scale(load_image('Back.jpg'), (width, height))
 background2 = pygame.transform.scale(load_image('blur_background.jpg'), (width, height))
 
 
@@ -64,8 +63,14 @@ def game():
     cur_level = int(get_cur_level()['cur_level'])
     backg = pygame.transform.scale(load_image(backgrounds[cur_level]), (width, height))
     while running:
+        if hero.exist or hero_died():  # Если персонаж умер
+            level.coins_kolvo(None, True)  # Обнуляем текущие монеты и возвращаем  жизни
+            game_over()
+
         if level.level_end == 'end':  # Если пройдены все уровни
+            level.coins_kolvo(None, True)
             main_menu()
+
         if level.level_end:  # Если уровень пройден
             game()
             level.level_end = False
@@ -108,7 +113,6 @@ def levels():
 
                 elif btns[0].rect.collidepoint(event.pos):
                     change_level(False, 0)
-                    print(get_cur_level())
                     game()
                 elif btns[1].rect.collidepoint(event.pos):
                     change_level(False, 1)
@@ -148,6 +152,32 @@ def settings():
                         change_volume(-1)
                 elif btns[2].rect.collidepoint(event.pos):  # Если нажата кнопка Back
                     main_menu()
+
+        clock.tick(FPS)
+        pygame.display.flip()
+
+
+def game_over():
+    running = True
+    while running:
+        screen.fill('black')
+        btns = game_over_btns()
+
+        for btn in btns:  # Подсветка кнопки синим цветом при наведении курсора
+            if btn.rect.collidepoint(pygame.mouse.get_pos()):
+                btn.draw('#1E90FF')
+            else:
+                btn.draw()
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                if btns[0].rect.collidepoint(event.pos):
+                    main_menu()
+                elif btns[1].rect.collidepoint(event.pos):
+                    game()
 
         clock.tick(FPS)
         pygame.display.flip()
