@@ -17,7 +17,7 @@ class Button():
     def draw(self, border_color='black'):
         pygame.draw.rect(self.screen, border_color,
                          (self.x - 5, self.y - 5, self.width + 10, self.height + 10))  # Обводка кнопки
-        if self.image: # Кнопка c картинкой на ней
+        if self.image:  # Кнопка c картинкой на ней
             screen.blit(self.image, (self.x, self.y, self.width, self.height))
         else:
             pygame.draw.rect(self.screen, '#808080', (self.x, self.y, self.width, self.height))  # Кнопка
@@ -38,7 +38,8 @@ def create_settings():
 
     draw_text("Volume settings", None, None, (width // 2 - 260, 150), 'black')  # Печатаем текст
 
-    draw_text(f"Current volume: {get_volume()['cur_volume']}%", None, None, (width // 2 - 400, 300), 'black')  # Печатаем текст
+    draw_text(f"Current volume: {get_volume()['cur_volume']}%", None, None, (width // 2 - 400, 300),
+              'black')  # Печатаем текст
 
     minus_btn = Button(screen, (width // 2 - 400, 500), (200, 100), '-')
     plus_btn = Button(screen, (width // 2 + 90, 500), (200, 100), '+')
@@ -53,6 +54,7 @@ def settings_btn():
     settings_rect.x, settings_rect.y = 70, 60
     screen.blit(settings, (settings_rect.x, settings_rect.y))
     return {'settings': settings_rect}
+
 
 #  Создание кнопок в уровнях
 def change_lvl():

@@ -13,6 +13,8 @@ mixer.init()
 fail_sound = mixer.Sound("sounds/fail_snd.wav")  # Звук проигрыша
 screen = pygame.display.set_mode((width, height))  # Основной экран
 
+backgrounds = ["Back.jpg", "Background2.jpg", "Trees 1.jpg"]
+
 
 def get_cur_level():  # Функция для получения текущего уровня из файла
     level_file = list(csv.DictReader(open('data/current_level.csv'), delimiter=';'))
@@ -20,9 +22,11 @@ def get_cur_level():  # Функция для получения текущег�
 
 
 # Функция для изменения текущего уровня
-def change_level(zeroing=False):
+def change_level(zeroing=False, level=None):
     l = get_cur_level()
-    if not zeroing:
+    if level:  #  Если пользователь выбрал уровень сам
+        l['cur_level'] = level
+    elif not zeroing:
         l['cur_level'] = int(l['cur_level']) + 1
     else:
         l['cur_level'] = 0

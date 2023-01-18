@@ -45,7 +45,7 @@ def main_menu():
                     pygame.quit()
                     sys.exit()
                 elif btns[2].rect.collidepoint(event.pos):  # Если нажата кнопка levels
-                        levels()
+                    levels()
 
         clock.tick(FPS)
         pygame.display.flip()
@@ -61,13 +61,16 @@ def game():
     level = Level(screen, hero)
     running = True
     event = False
+    cur_level = int(get_cur_level()['cur_level'])
+    backg = pygame.transform.scale(load_image(backgrounds[cur_level]), (width, height))
     while running:
         if level.level_end == 'end':  # Если пройдены все уровни
             main_menu()
-        if level.level_end:  #  Если уровень пройден
+        if level.level_end:  # Если уровень пройден
             game()
             level.level_end = False
-        screen.blit(background, (0, 0))
+
+        screen.blit(backg, (0, 0))
         game_intrf(screen)
 
         for event in pygame.event.get():
@@ -75,14 +78,13 @@ def game():
                 level.coins_kolvo(None, True)
                 pygame.quit()
                 sys.exit()
-            elif event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
-                running = False
         level.update()
         anim_sprites.update(event)
         anim_sprites.draw(screen)
 
         clock.tick(FPS)
         pygame.display.flip()
+
 
 def levels():
     running = True
@@ -100,10 +102,21 @@ def levels():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                if btns[-1].rect.collidepoint(event.pos):
+                    main_menu()
+                elif btns[0].rect.collidepoint(event.pos):
+                    change_level(False, 0)
+                    game()
+                elif btns[1].rect.collidepoint(event.pos):
+                    change_level(False, 1)
+                    game()
+                elif btns[2].rect.collidepoint(event.pos):
+                    change_level(False, 2)
+                    game()
 
         clock.tick(FPS)
         pygame.display.flip()
-
 
 
 def settings():

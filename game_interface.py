@@ -36,6 +36,14 @@ def get_lives(sp):
     return lives
 
 
+def hero_died():  # Функция для проверки смерти персонажа
+    file_read = csv.DictReader(open('data/coins.csv'), delimiter=';')
+    lives = list(file_read)[0]['lives']
+    if lives <= 0:
+        return True
+    return False
+
+
 def draw_nums(num, pos, screen):  # Отображение числа монет
     font = pygame.font.Font('data/retro-land-mayhem.ttf', 35)
     text = font.render(num, True, 'black')
