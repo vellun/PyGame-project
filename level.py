@@ -109,8 +109,13 @@ class Level:
         if pygame.sprite.spritecollideany(self.hero, self.flag):  # Столновение персонажа с флагом в конце уровня
 
             change_level()
-            screensaver(self.screen, f'Level {int(get_cur_level()["cur_level"]) + 1}')
-            self.level_end = True
+            if int(get_cur_level()['cur_level']) == 3:  # Если игрок прошел все уровни
+                screensaver(screen, "You have completed the game!", 50)
+                self.level_end = 'end'
+                change_level(True)
+            else:
+                screensaver(self.screen, f'Level {int(get_cur_level()["cur_level"]) + 1}')
+                self.level_end = True
 
         #  Проверка столкновений врагов с уровнем
         for enemy in self.enemies.sprites():

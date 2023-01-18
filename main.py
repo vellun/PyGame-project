@@ -60,6 +60,8 @@ def game():
     running = True
     event = False
     while running:
+        if level.level_end == 'end':  # Если пройдены все уровни
+            main_menu()
         if level.level_end:  #  Если уровень пройден
             game()
             level.level_end = False

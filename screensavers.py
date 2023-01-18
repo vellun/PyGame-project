@@ -7,9 +7,9 @@ clock = pygame.time.Clock()
 FPS = 30
 
 
-def screensaver(screen, text):  # Функция для отображения заставок между уровнями
+def screensaver(screen, text, size=130):  # Функция для отображения заставок между уровнями
         screen.fill('black')
-        font = pygame.font.Font('data/retro-land-mayhem.ttf', 130)
+        font = pygame.font.Font('data/retro-land-mayhem.ttf', size)
         text2 = font.render(text, True, 'white')
         fw, fh = font.size(text)
         screen.blit(text2, (500, 500))
