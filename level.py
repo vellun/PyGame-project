@@ -67,15 +67,16 @@ class Level:
 
         for sprite in self.tiles.sprites():
             #  Проверка столкновений справа и слева от персонажа
-            if sprite.rect.collidepoint(self.hero.rect.centerx, self.hero.rect.height):
+            if sprite.rect.colliderect(right_left_rect):
                 if self.hero.directionx < 0:
                     self.hero.rect.left = sprite.rect.right
                     self.hero.directionx = 0
                 elif self.hero.directionx > 0:
                     self.hero.rect.right = sprite.rect.left
                     self.hero.directionx = 0
+                self.level_shift = 0
             #  Проверка столкновений сверху и снизу персонажа
-            if sprite.rect.colliderect(top_bottom_rect):
+            elif sprite.rect.colliderect(top_bottom_rect):
                 if self.hero.directiony < 0:
                     self.hero.rect.top = sprite.rect.bottom
                     self.hero.directiony = 0
