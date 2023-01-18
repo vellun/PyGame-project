@@ -8,10 +8,11 @@ from objects_coords import *
 from animations import *
 import csv
 
+maps = ['map.tmx', 'map2.tmx', 'map2.tmx']
 
 class Level:
     def __init__(self, screen, hero=None):
-        self.map = load_pygame('data\map.tmx')
+        self.map = load_pygame(f'data\{maps[cur_level]}')
         self.screen = screen
         self.hero = hero
         self.level_shift = 0
@@ -35,13 +36,13 @@ class Level:
                 image = self.map.get_tile_image(x, y, layer=0)
                 if image:
                     Tile(self.map, x, y, self.level_shift, self.tiles)
-        for i in golden_coins:  # Создание золотых монет
+        for i in golden_coins[cur_level]:  # Создание золотых монет
             Coins(i[0] * self.map.tilewidth, i[1] * self.map.tilewidth, "MonedaD.png", self.golden_coins)
-        for i in silver_coins:  # Создание серебряных монет
+        for i in silver_coins[cur_level]:  # Создание серебряных монет
             Coins(i[0] * self.map.tilewidth, i[1] * self.map.tilewidth, "MonedaP.png", self.silver_coins)
-        for i in enemies:  # Создание врагов
+        for i in enemies[cur_level]:  # Создание врагов
             Enemy(i[0] * self.map.tilewidth, i[1] * self.map.tilewidth, self.enemies)
-        for i in flags:  # Создание флага
+        for i in flags[cur_level]:  # Создание флага
             Coins(i[0] * self.map.tilewidth, i[1] * self.map.tilewidth, "flag animation.png", self.flag)
 
     def camera(self):  # Камера

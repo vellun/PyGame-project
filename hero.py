@@ -74,17 +74,6 @@ class Hero(pygame.sprite.Sprite):
                 self.directionx = 0
                 self.run = True
 
-    # def hero_status(self):
-    #     if self.directiony > 0:
-    #         self.animation(heroesFall)
-    #     elif self.directiony < 0:
-    #         if self.cur_frame == 0:
-    #             self.animation(heroesJump)
-    #     elif self.directiony == 0 and self.directionx == 0:
-    #         self.animation(heroesStands)
-    #     elif self.run:
-    #         self.animation(heroesRun)
-
     def animation(self, animation_sp):
         # В зависимости от нужной анимации изменяется список frames
         sheet, colums, rows = animation_sp[self.hero_num][0], animation_sp[self.hero_num][1][0], \

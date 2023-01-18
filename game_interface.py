@@ -36,7 +36,7 @@ def get_lives(sp):
     return lives
 
 
-def draw_nums(num, pos, screen):
+def draw_nums(num, pos, screen):  # Отображение числа монет
     font = pygame.font.Font('data/retro-land-mayhem.ttf', 35)
     text = font.render(num, True, 'black')
     screen.blit(text, pos)

@@ -4,7 +4,7 @@ from hero import Hero
 from level import Level
 import pygame
 from functions import *
-from game_interface import game_intrf
+from game_interface import *
 from main_menu import *
 
 pygame.init()
@@ -20,21 +20,25 @@ def main_menu():
     pygame.mixer.music.play(-1)
     while True:
         screen.blit(background2, (0, 0))
+        st = settings_btn()['settings']  # Кнопка настроек
         btns = create_menu()
-        for btn in btns:
+        for btn in btns:  # Подсветка кнопки синим цветом при наведении курсора
             if btn.rect.collidepoint(pygame.mouse.get_pos()):
                 btn.draw('#1E90FF')
             else:
                 btn.draw()
 
         for event in pygame.event.get():
+            if event.type == pygame.MOUSEBUTTONUP and st.collidepoint(
+                    pygame.mouse.get_pos()):  # Если нажали на настройки
+                settings()
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
             elif event.type == pygame.MOUSEBUTTONDOWN:
-                if btns[0].rect.collidepoint(event.pos):
+                if btns[0].rect.collidepoint(event.pos):  # Если нажата кнопка start
                     game()
-                elif btns[1].rect.collidepoint(event.pos):
+                elif btns[1].rect.collidepoint(event.pos):  # Если нажата кнопка exit
                     pygame.quit()
                     sys.exit()
 
@@ -53,6 +57,8 @@ def game():
     event = False
     while running:
         screen.blit(background, (0, 0))
+        game_intrf(screen)
+
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 level.coins_kolvo(None, True)
@@ -63,7 +69,37 @@ def game():
         level.update()
         anim_sprites.update(event)
         anim_sprites.draw(screen)
-        game_intrf(screen)
+
+        clock.tick(FPS)
+        pygame.display.flip()
+
+
+def settings():
+    running = True
+    while running:
+        screen.blit(background2, (0, 0))
+        btns = create_settings()
+
+        for btn in btns:  # Подсветка кнопки синим цветом при наведении курсора
+            if btn.rect.collidepoint(pygame.mouse.get_pos()):
+                btn.draw('#1E90FF')
+            else:
+                btn.draw()
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            elif event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
+                running = False
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                if btns[0].rect.collidepoint(event.pos):  # Если нажата кнопка +
+                    if cur_volume < 100:
+                        pass
+                elif btns[0].rect.collidepoint(event.pos):  # Если нажата кнопка -
+                    if cur_volume > 0:
+                        pass
+
 
         clock.tick(FPS)
         pygame.display.flip()

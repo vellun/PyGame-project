@@ -6,10 +6,12 @@ from pygame import mixer
 ''' Функции для загрузки картинки(load image) и для получения кадров анимации(cut_sheet) '''
 
 size = width, height = 1600, 900
+cur_level = 0
+cur_volume = 100
 
 mixer.init()
 fail_sound = mixer.Sound("sounds/fail_snd.wav")  # Звук проигрыша
-screen = pygame.display.set_mode((width, height)) # Основной экран
+screen = pygame.display.set_mode((width, height))  # Основной экран
 
 
 def load_image(name, colorkey=None):
@@ -38,16 +40,18 @@ def cut_sheet(obj, sheet, columns, rows, x, y, type='idle'):
     for j in range(rows):
         for i in range(columns):
             frame_location = (obj.rect.w * i, obj.rect.h * j)
-            # if type == 'run':
-            #     frames.append(sheet.subsurface(pygame.Rect(frame_location, (obj.rect.w - 80, obj.rect.h))))
-            # else:
             frames.append(sheet.subsurface(pygame.Rect(frame_location, (obj.rect.w, obj.rect.h))))
     return frames
 
-def draw_text(text, btn_pos, btn_size):
+
+def draw_text(text, btn_pos=None, btn_size=None, pos=None, color='white'):
     font = pygame.font.Font('data/retro-land-mayhem.ttf', 50)
-    text2 = font.render(text, True, 'white')
-    bx, by = btn_pos
-    bw, bh = btn_size
-    fw, fh = font.size(text)
-    screen.blit(text2, (bx + ((bw - fw) // 2), by + ((bh - fh) // 2)))
+    text2 = font.render(text, True, color)
+    if btn_pos and btn_size:  # Если параметры переданы, нужно напечатать текст на кнопке
+        bx, by = btn_pos
+        bw, bh = btn_size
+        fw, fh = font.size(text)
+        screen.blit(text2, (bx + ((bw - fw) // 2), by + ((bh - fh) // 2)))
+    if pos:  # Если переданы только координаты, нужно напечатать просто текст
+        screen.blit(text2, pos)
+
