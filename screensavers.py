@@ -16,6 +16,6 @@ def screensaver(screen, text, size=130):  # Функция для отображ
 
         clock.tick(FPS)
         pygame.display.flip()
-        pygame.time.delay(2000)
+        pygame.time.delay(2500)
 
 

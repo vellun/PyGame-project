@@ -6,8 +6,9 @@ pygame.init()
 
 #  Класс кнопки
 class Button():
-    def __init__(self, screen, pos, size, text):
+    def __init__(self, screen, pos, size, text, image=None):
         self.x, self.y = pos
+        self.image = image
         self.width, self.height = size
         self.text = text
         self.screen = screen
@@ -16,7 +17,10 @@ class Button():
     def draw(self, border_color='black'):
         pygame.draw.rect(self.screen, border_color,
                          (self.x - 5, self.y - 5, self.width + 10, self.height + 10))  # Обводка кнопки
-        pygame.draw.rect(self.screen, '#808080', (self.x, self.y, self.width, self.height))  # Кнопка
+        if self.image: # Кнопка c картинкой на ней
+            screen.blit(self.image, (self.x, self.y, self.width, self.height))
+        else:
+            pygame.draw.rect(self.screen, '#808080', (self.x, self.y, self.width, self.height))  # Кнопка
         draw_text(self.text, (self.x, self.y), (self.width, self.height))
 
 
@@ -49,3 +53,19 @@ def settings_btn():
     settings_rect.x, settings_rect.y = 70, 60
     screen.blit(settings, (settings_rect.x, settings_rect.y))
     return {'settings': settings_rect}
+
+#  Создание кнопок в уровнях
+def change_lvl():
+    lvl1 = pygame.image.load("sprites/interface_pictures/level1.jpg")
+    lvl2 = pygame.image.load("sprites/interface_pictures/level2.jpg")
+    lvl3 = pygame.image.load("sprites/interface_pictures/level3.jpg")
+
+    s = [((100, 120), lvl1), ((850, 120), lvl2), ((480, 520), lvl3)]
+    btns = []
+    for i in range(len(s)):
+        btns.append(Button(screen, s[i][0], (600, 350), f'Level {i + 1}', s[i][1]))
+    back_btn = Button(screen, (50, height - 120), (200, 70), 'Back')  # Кнопка выхода в меню
+    btns.append(back_btn)
+    for i in btns:
+        i.draw()
+    return btns

@@ -44,6 +44,8 @@ def main_menu():
                 elif btns[1].rect.collidepoint(event.pos):  # Если нажата кнопка exit
                     pygame.quit()
                     sys.exit()
+                elif btns[2].rect.collidepoint(event.pos):  # Если нажата кнопка levels
+                        levels()
 
         clock.tick(FPS)
         pygame.display.flip()
@@ -82,6 +84,27 @@ def game():
         clock.tick(FPS)
         pygame.display.flip()
 
+def levels():
+    running = True
+    while running:
+        screen.fill('black')
+        btns = change_lvl()
+
+        for btn in btns:  # Подсветка кнопки синим цветом при наведении курсора
+            if btn.rect.collidepoint(pygame.mouse.get_pos()):
+                btn.draw('#1E90FF')
+            else:
+                btn.draw()
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+
+        clock.tick(FPS)
+        pygame.display.flip()
+
+
 
 def settings():
     running = True
@@ -100,8 +123,6 @@ def settings():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
-            elif event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
-                running = False
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 cur_volume = int(get_volume()['cur_volume'])
                 if btns[0].rect.collidepoint(event.pos):  # Если нажата кнопка +
