@@ -8,11 +8,26 @@ from pygame import mixer
 ''' Функции для загрузки картинки(load image) и для получения кадров анимации(cut_sheet) '''
 
 size = width, height = 1600, 900
-cur_level = 0
 
 mixer.init()
 fail_sound = mixer.Sound("sounds/fail_snd.wav")  # Звук проигрыша
 screen = pygame.display.set_mode((width, height))  # Основной экран
+
+
+def get_cur_level():  # Функция для получения текущего уровня из файла
+    level_file = list(csv.DictReader(open('data/current_level.csv'), delimiter=';'))
+    return level_file[0]
+
+
+# Функция для изменения текущего уровня
+def change_level():
+    l = get_cur_level()
+    l['cur_level'] = int(l['cur_level']) + 1
+
+    file_write = csv.DictWriter(open('data/current_level.csv', 'w', newline=''), fieldnames=['cur_level'],
+                                delimiter=';')
+    file_write.writeheader()
+    file_write.writerow(l)
 
 
 def get_volume():  # Функция для получения значения громкости из файла

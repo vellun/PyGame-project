@@ -14,7 +14,7 @@ maps = ['map.tmx', 'map2.tmx', 'map3.tmx']
 
 class Level:
     def __init__(self, screen, hero=None):
-        self.map = load_pygame(f'data\{maps[cur_level]}')
+        self.map = load_pygame(f'data\{maps[int(get_cur_level()["cur_level"])]}')
         self.screen = screen
         self.hero = hero
         self.level_shift = 0
@@ -28,6 +28,7 @@ class Level:
         self.level_end = False
 
     def render(self):  # Рисование уровня
+        cur_level = int(get_cur_level()["cur_level"])
         self.tiles = pygame.sprite.Group()
         self.golden_coins = pygame.sprite.Group()
         self.silver_coins = pygame.sprite.Group()
@@ -105,8 +106,10 @@ class Level:
                 coin.kill()
                 self.coin_sound.play()
 
-        if pygame.sprite.spritecollideany(self.hero, self.flag):
-            screensaver(self.screen, f'Level {cur_level + 1}')
+        if pygame.sprite.spritecollideany(self.hero, self.flag):  # Столновение персонажа с флагом в конце уровня
+
+            change_level()
+            screensaver(self.screen, f'Level {int(get_cur_level()["cur_level"]) + 1}')
             self.level_end = True
 
         #  Проверка столкновений врагов с уровнем

@@ -6,6 +6,7 @@ import pygame
 from functions import *
 from game_interface import *
 from main_menu import *
+from screensavers import *
 
 pygame.init()
 
@@ -38,6 +39,7 @@ def main_menu():
                 sys.exit()
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 if btns[0].rect.collidepoint(event.pos):  # Если нажата кнопка start
+                    screensaver(screen, f'Level {int(get_cur_level()["cur_level"]) + 1}')
                     game()
                 elif btns[1].rect.collidepoint(event.pos):  # Если нажата кнопка exit
                     pygame.quit()
