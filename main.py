@@ -105,8 +105,10 @@ def levels():
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 if btns[-1].rect.collidepoint(event.pos):
                     main_menu()
+
                 elif btns[0].rect.collidepoint(event.pos):
                     change_level(False, 0)
+                    print(get_cur_level())
                     game()
                 elif btns[1].rect.collidepoint(event.pos):
                     change_level(False, 1)

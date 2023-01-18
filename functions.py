@@ -24,12 +24,13 @@ def get_cur_level():  # Функция для получения текущег�
 # Функция для изменения текущего уровня
 def change_level(zeroing=False, level=None):
     l = get_cur_level()
-    if level:  #  Если пользователь выбрал уровень сам
+    if level is not None:  # Если пользователь выбрал уровень сам
         l['cur_level'] = level
-    elif not zeroing:
-        l['cur_level'] = int(l['cur_level']) + 1
     else:
-        l['cur_level'] = 0
+        if not zeroing:
+            l['cur_level'] = int(l['cur_level']) + 1
+        else:
+            l['cur_level'] = 0
 
     file_write = csv.DictWriter(open('data/current_level.csv', 'w', newline=''), fieldnames=['cur_level'],
                                 delimiter=';')
