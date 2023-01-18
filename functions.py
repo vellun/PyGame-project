@@ -8,7 +8,7 @@ from pygame import mixer
 ''' Функции для загрузки картинки(load image) и для получения кадров анимации(cut_sheet) '''
 
 size = width, height = 1600, 900
-cur_level = 2
+cur_level = 0
 
 mixer.init()
 fail_sound = mixer.Sound("sounds/fail_snd.wav")  # Звук проигрыша

@@ -4,6 +4,7 @@ from functions import *
 pygame.init()
 
 
+#  Класс кнопки
 class Button():
     def __init__(self, screen, pos, size, text):
         self.x, self.y = pos
@@ -37,7 +38,8 @@ def create_settings():
 
     minus_btn = Button(screen, (width // 2 - 400, 500), (200, 100), '-')
     plus_btn = Button(screen, (width // 2 + 90, 500), (200, 100), '+')
-    return [plus_btn, minus_btn]
+    back_btn = Button(screen, (50, 30), (200, 70), 'Back')
+    return [plus_btn, minus_btn, back_btn]
 
 
 def settings_btn():

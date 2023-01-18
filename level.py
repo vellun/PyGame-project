@@ -7,6 +7,7 @@ from enemy import *
 from objects_coords import *
 from animations import *
 import csv
+from screensavers import *
 
 maps = ['map.tmx', 'map2.tmx', 'map3.tmx']
 
@@ -24,6 +25,7 @@ class Level:
         self.voice = pygame.mixer.Sound("sounds/voice.mp3")
         self.bah = pygame.mixer.Sound("sounds/bah.mp3")
         self.enem = None
+        self.level_end = False
 
     def render(self):  # Рисование уровня
         self.tiles = pygame.sprite.Group()
@@ -104,8 +106,8 @@ class Level:
                 self.coin_sound.play()
 
         if pygame.sprite.spritecollideany(self.hero, self.flag):
-            pygame.quit()
-            sys.exit()
+            screensaver(self.screen, f'Level {cur_level + 1}')
+            self.level_end = True
 
         #  Проверка столкновений врагов с уровнем
         for enemy in self.enemies.sprites():

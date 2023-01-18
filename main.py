@@ -58,6 +58,9 @@ def game():
     running = True
     event = False
     while running:
+        if level.level_end:  #  Если уровень пройден
+            game()
+            level.level_end = False
         screen.blit(background, (0, 0))
         game_intrf(screen)
 
@@ -103,6 +106,8 @@ def settings():
                 elif btns[1].rect.collidepoint(event.pos):  # Если нажата кнопка -
                     if cur_volume > 0:
                         change_volume(-1)
+                elif btns[2].rect.collidepoint(event.pos):  # Если нажата кнопка Back
+                    main_menu()
 
         clock.tick(FPS)
         pygame.display.flip()
