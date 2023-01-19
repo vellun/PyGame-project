@@ -7,7 +7,6 @@ from functions import *
 from game_interface import *
 from main_menu import *
 from screensavers import *
-
 pygame.init()
 
 clock = pygame.time.Clock()

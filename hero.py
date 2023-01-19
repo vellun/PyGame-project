@@ -35,9 +35,6 @@ class Hero(pygame.sprite.Sprite):
     def get_input(self, evnt):
         keys = pygame.key.get_pressed()
         if evnt:
-            if keys[pygame.K_DOWN] and self.hero_num != 1:
-                self.directionx = 1 if self.flip == 1 else -1
-
             if evnt.type == pygame.KEYDOWN and keys[pygame.K_RIGHT] or keys[pygame.K_LEFT]:
                 self.flip = 1 if keys[pygame.K_RIGHT] else 0
 
